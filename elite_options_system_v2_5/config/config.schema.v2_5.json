@@ -1,0 +1,134 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "EOTS_V2_5_Config_Schema",
+    "description": "Canonical schema for EOTS v2.5 configuration (config_v2_5.json). Defines all valid parameters, types, defaults, and descriptions for system operation.",
+    "type": "object",
+    "definitions": {
+        "dag_alpha_coeffs_schema": {
+            "type": "object",
+            "description": "Defines the alignment coefficients for DAG/TDPI/VRI calculations, modulating the impact of flow.",
+            "properties": {
+                "aligned": {"type": "number", "default": 1.35},
+                "opposed": {"type": "number", "default": 0.65},
+                "neutral": {"type": "number", "default": 1.0}
+            },
+            "default": {"aligned": 1.35, "opposed": 0.65, "neutral": 1.0}
+        }
+    },
+    "properties": {
+        "system_settings": {
+            "type": "object",
+            "description": "Global settings for system operation, logging, and dynamic thresholds.",
+            "properties": {
+                "project_root_override": {"type": ["string", "null"], "default": null},
+                "logging_level": {"type": "string", "enum": ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], "default": "INFO"},
+                "log_to_file": {"type": "boolean", "default": true},
+                "log_file_path": {"type": "string", "pattern": "\\.log$", "default": "logs/eots_v2_5.log"},
+                "max_log_file_size_bytes": {"type": "integer", "minimum": 1024, "default": 10485760},
+                "backup_log_count": {"type": "integer", "minimum": 0, "default": 5},
+                "metrics_for_dynamic_threshold_distribution_tracking": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "default": ["GIB_OI_based_Und", "VAPI_FA_Z_Score_Und", "DWFD_Z_Score_Und", "TW_LAF_Z_Score_Und"]
+                },
+                "signal_activation": {"type": "object", "default": {"EnableAllSignals": true}}
+            },
+            "default": {}
+        },
+        "data_fetcher_settings": {
+            "type": "object",
+            "description": "Settings for API data fetchers.",
+            "properties": {
+                "convexvalue_api_key": {"type": "string"},
+                "tradier_api_key": {"type": "string"},
+                "tradier_account_id": {"type": "string"},
+                "max_retries": {"type": "integer", "minimum": 0, "default": 3},
+                "retry_delay_seconds": {"type": "number", "minimum": 0, "default": 1.0}
+            },
+            "required": ["convexvalue_api_key", "tradier_api_key", "tradier_account_id"]
+        },
+        "data_management_settings": {
+            "type": "object",
+            "description": "Settings for data storage and caching paths.",
+            "default": {
+                "performance_data_store_dir": "data/performance"
+            }
+        },
+        "data_processor_settings": {
+            "type": "object",
+            "description": "Core parameters for the MetricsCalculator.",
+            "properties": {
+                "factors": {"type": "object", "default": {}},
+                "coefficients": {
+                    "type": "object",
+                    "properties": {
+                        "dag_alpha": {"$ref": "#/definitions/dag_alpha_coeffs_schema"},
+                        "tdpi_beta": {"$ref": "#/definitions/dag_alpha_coeffs_schema"},
+                        "vri_gamma": {"$ref": "#/definitions/dag_alpha_coeffs_schema"}
+                    },
+                    "default": {}
+                },
+                "iv_context_parameters": {"type": "object", "default": {}}
+            },
+            "default": {}
+        },
+        "strategy_settings": {"type": "object", "default": {}},
+        "adaptive_metric_parameters": {
+            "type": "object",
+            "description": "Settings for Tier 2 Adaptive Metrics.",
+            "default": {}
+        },
+        "enhanced_flow_metric_settings": {
+            "type": "object",
+            "description": "Settings for Tier 3 Enhanced Rolling Flow Metrics.",
+            "default": {}
+        },
+        "adaptive_trade_idea_framework_settings": {
+            "type": "object",
+            "description": "Core settings for the ATIF decision-making engine.",
+            "properties": {
+                 "min_conviction_to_initiate_trade": {
+                    "type": "number",
+                    "minimum": 0, "maximum": 5,
+                    "default": 2.5
+                 },
+                 "learning_params": {
+                    "type": "object",
+                    "properties": {
+                        "performance_tracker_query_lookback": {"type": "integer", "minimum": 1, "default": 90},
+                        "learning_rate_for_signal_weights": {"type": "number", "minimum": 0, "maximum": 1, "default": 0.05}
+                    },
+                    "default": {}
+                 },
+                 "strategy_specificity_rules": {"type": "array", "default": []}
+            },
+            "default": {}
+        },
+        "ticker_context_analyzer_settings": {"type": "object", "default": {}},
+        "key_level_identifier_settings": {"type": "object", "default": {}},
+        "heatmap_generation_settings": {"type": "object", "default": {}},
+        "market_regime_engine_settings": {
+            "type": "object",
+            "description": "Settings governing the Market Regime Engine.",
+            "default": {
+                "default_regime": "REGIME_UNCLEAR_OR_TRANSITIONING",
+                "regime_evaluation_order": [],
+                "regime_rules": {}
+            }
+        },
+        "visualization_settings": {"type": "object", "default": {}},
+        "symbol_specific_overrides": {
+            "type": "object",
+            "description": "Symbol-specific parameter overrides.",
+            "properties": {
+                "DEFAULT": {"type": "object"}
+            },
+            "additionalProperties": {"type": "object"},
+            "default": {}
+        }
+    },
+    "additionalProperties": false,
+    "required": [
+        "data_fetcher_settings"
+    ]
+}

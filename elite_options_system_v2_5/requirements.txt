@@ -1,0 +1,59 @@
+# EOTS v2.5 - Canonical Requirements
+
+# --- Core Application & Web Framework ---
+aiohttp==3.9.5
+blinker==1.8.2
+dash==2.17.0
+dash-ag-grid==31.3.1
+dash-bootstrap-components==1.6.0
+Flask==3.0.3
+Werkzeug==3.0.3
+
+# --- Core Data Science & Numerics ---
+numpy==1.26.4
+pandas==2.2.2
+pandera==0.19.2
+pyarrow==16.1.0
+scikit-learn==1.5.0
+scipy==1.13.1
+threadpoolctl==3.6.0
+
+# --- Data Validation & Modeling ---
+pydantic==2.7.4
+jsonschema==4.22.0
+
+# --- Database ---
+# Using the modern psycopg3 with pre-compiled binary for ease of installation.
+psycopg[binary]==3.1.19
+
+# --- Data Provider, API & Retries ---
+# Note: convexlib is installed directly from git
+convex==0.7.0
+convexlib @ git+https://github.com/convexvalue/convexlib.git@fc31810401cc46619e74a2815a04f8589e08a1c5
+requests==2.32.3
+tenacity==8.4.1
+urllib3==2.2.1
+
+# --- Utilities & General Dependencies ---
+certifi==2024.6.2
+charset-normalizer==3.3.2
+click==8.1.7
+colorama==0.4.6
+filelock==3.14.0
+idna==3.7
+importlib-metadata==7.1.0
+itsdangerous==2.2.0
+Jinja2==3.1.4
+joblib==1.4.2
+loguru==0.7.2
+MarkupSafe==2.1.5
+nest-asyncio==1.6.0
+packaging==24.1
+python-dateutil==2.9.0.post0
+python-dotenv==1.0.1
+pytz==2024.1
+rich==13.7.1
+six==1.16.0
+typing_extensions==4.12.2
+tzdata==2024.1
+zipp==3.19.2

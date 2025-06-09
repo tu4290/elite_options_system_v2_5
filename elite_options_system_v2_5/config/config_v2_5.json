@@ -1,0 +1,759 @@
+{
+    "//": "NOTE: This file is validated against config.schema.v2.5.json. Edit with care.",
+    "system_settings": {
+        "project_root_override": null,
+        "logging_level": "DEBUG",
+        "log_to_file": true,
+        "log_file_path": "logs/eots_v2_5.log",
+        "max_log_file_size_bytes": 10485760,
+        "backup_log_count": 5,
+        "metrics_for_dynamic_threshold_distribution_tracking": [
+            "GIB_OI_based_Und",
+            "VAPI_FA_Z_Score_Und",
+            "DWFD_Z_Score_Und",
+            "TW_LAF_Z_Score_Und"
+        ],
+        "signal_activation": {
+            "EnableAllSignals": true
+        }
+    },
+    "data_fetcher_settings": {
+        "convexvalue_api_key": "YOUR_CV_API_KEY_HERE",
+        "tradier_api_key": "YOUR_TRADIER_API_KEY_HERE",
+        "tradier_account_id": "YOUR_TRADIER_ACCOUNT_ID_HERE",
+        "max_retries": 3,
+        "retry_delay_seconds": 5
+    },
+    "data_management_settings": {
+        "data_cache_dir": "data_cache_v2_5",
+        "historical_data_store_dir": "data_cache_v2_5/historical_data_store",
+        "performance_data_store_dir": "data_cache_v2_5/performance_data_store"
+    },
+    "data_processor_settings": {
+        "//": "Template for factors and coefficients used in metric calculations.",
+        "factors": {
+            "tdpi_gaussian_width": 0.02,
+            "vri_0dte_gamma_align_reinforcing": 1.2,
+            "vri_0dte_gamma_align_contradicting": 0.8
+        },
+        "coefficients": {
+            "dag_alpha": {
+                "aligned": 1.35,
+                "opposed": 0.65,
+                "neutral": 1.0
+            },
+            "tdpi_beta": {
+                "aligned": 1.3,
+                "opposed": 0.7,
+                "neutral": 1.0
+            },
+            "vri_gamma": {
+                "aligned": 1.3,
+                "opposed": 0.7,
+                "neutral": 1.0
+            }
+        },
+        "iv_context_parameters": {
+            "vol_trend_avg_days_vri0dte": 10,
+            "vol_trend_avg_days_vri_sens": 20
+        }
+    },
+    "strategy_settings": {
+        "default_target_symbol": "SPY",
+        "thresholds": {
+            "//": "Example thresholds for raw signal generation.",
+            "sai_high_conviction": 0.75,
+            "ssi_structure_change": 0.2,
+            "vapi_fa_strong_z_score": 2
+        },
+        "targets": {
+            "target_atr_stop_loss_multiplier": 1.5,
+            "t1_mult_no_sr": 1,
+            "t2_mult_no_sr": 2,
+            "min_target_atr_distance_mult": 0.5
+        },
+        "recommendations": {
+            "min_CATEGORY_stars_to_issue_new_reco": 3
+        }
+    },
+    "adaptive_metric_parameters": {
+        "//": "Parameters to control the 'adaptive' nature of Tier 2 metrics.",
+        "a_dag_settings": {
+            "base_dag_alpha_coeffs": {
+                "aligned": 1.35,
+                "opposed": 0.65,
+                "neutral": 1
+            }
+        },
+        "e_sdag_settings": {
+            "use_enhanced_skew_calculation_for_sgexoi": false
+        },
+        "d_tdpi_settings": {
+            "base_tdpi_beta_coeffs": {
+                "aligned": 1.3,
+                "opposed": 0.7,
+                "neutral": 1
+            },
+            "base_tdpi_gaussian_width": 0.02
+        },
+        "vri_2_0_settings": {
+            "base_vri_gamma_coeffs": {
+                "aligned": 1.3,
+                "opposed": 0.7,
+                "neutral": 1
+            }
+        }
+    },
+    "enhanced_flow_metric_settings": {
+        "//": "Parameters for the new Tier 3 flow metrics.",
+        "vapi_fa_params": {
+            "primary_flow_interval_for_pvr": "5m",
+            "acceleration_calculation_intervals": [
+                "5m",
+                "15m"
+            ],
+            "iv_source_key_for_weighting": "u_volatility",
+            "z_score_lookback_periods_vapi_fa": 100
+        },
+        "dwfd_params": {
+            "flow_interval_for_components": "5m",
+            "normalization_window_value_flow": 100,
+            "normalization_window_volume_flow": 100,
+            "fvd_weight_factor": 0.5,
+            "z_score_lookback_periods_dwfd": 100
+        },
+        "tw_laf_params": {
+            "time_weights_for_intervals": {
+                "5m": 1,
+                "15m": 0.8,
+                "30m": 0.6,
+                "60m": 0.4
+            },
+            "z_score_lookback_periods_tw_laf": 100
+        }
+    },
+    "adaptive_trade_idea_framework_settings": {
+        "//": "Core settings that define the ATIF's 'brain'.",
+        "min_conviction_to_initiate_trade": 2.5,
+        "signal_integration_params": {
+            "//": "Example: Define base weights for different signal types."
+        },
+        "conviction_mapping_params": {
+            "//": "Example: Define how situational scores map to final conviction."
+        },
+        "strategy_specificity_rules": [
+            {
+                "name": "Aggressive Bullish Trend (Low IV)",
+                "conditions": {
+                    "bias": "Bullish",
+                    "min_conviction": 3.5,
+                    "max_conviction": 5.0,
+                    "regime_contains": [
+                        "TREND",
+                        "VAPI_FA_BULLISH"
+                    ],
+                    "max_iv_rank": 60,
+                    "ticker_context_flag_true": []
+                },
+                "strategy_output": {
+                    "strategy_type": "LongCall",
+                    "target_dte": [
+                        3,
+                        14
+                    ],
+                    "delta_range_long": [
+                        0.6,
+                        0.75
+                    ]
+                }
+            },
+            {
+                "name": "High IV, Range-Bound Credit",
+                "conditions": {
+                    "bias": "Neutral_Range",
+                    "min_conviction": 2.8,
+                    "max_conviction": 4.5,
+                    "regime_contains": [
+                        "STABLE",
+                        "POSITIVE_GIB",
+                        "RANGE"
+                    ],
+                    "min_iv_rank": 70,
+                    "ticker_context_flag_true": []
+                },
+                "strategy_output": {
+                    "strategy_type": "ShortIronCondor",
+                    "target_dte": [
+                        20,
+                        50
+                    ],
+                    "delta_range_short": [
+                        0.1,
+                        0.25
+                    ]
+                }
+            },
+            {
+                "name": "Standard Bullish Debit Spread",
+                "conditions": {
+                    "bias": "Bullish",
+                    "min_conviction": 3.0,
+                    "max_conviction": 5.0,
+                    "regime_contains": [
+                        "BULLISH"
+                    ],
+                    "min_iv_rank": 0,
+                    "ticker_context_flag_true": []
+                },
+                "strategy_output": {
+                    "strategy_type": "BullCallSpread",
+                    "target_dte": [
+                        5,
+                        21
+                    ],
+                    "delta_range_long": [
+                        0.55,
+                        0.7
+                    ],
+                    "delta_range_short": [
+                        0.25,
+                        0.4
+                    ]
+                }
+            }
+        ],
+        "intelligent_recommendation_management_rules": {
+            "//": "Example: Rules for adaptive stop-loss adjustments."
+        },
+        "learning_params": {
+            "performance_tracker_query_lookback": 90,
+            "learning_rate_for_signal_weights": 0.05,
+            "min_trades_for_statistical_significance": 20
+        }
+    },
+    "ticker_context_analyzer_settings": {
+        "//": "Define behavioral patterns and contexts for specific tickers.",
+        "SPY": {
+            "intraday_session_definitions": {
+                "OPENING_VOLATILITY": [
+                    "09:30:00",
+                    "10:15:00"
+                ],
+                "LUNCH_LULL": [
+                    "12:00:00",
+                    "13:30:00"
+                ],
+                "POWER_HOUR": [
+                    "15:00:00",
+                    "16:00:00"
+                ]
+            }
+        },
+        "DEFAULT_TICKER_PROFILE": {}
+    },
+    "key_level_identifier_settings": {
+        "//": "Parameters for identifying and scoring key levels.",
+        "nvp_support_quantile": 0.95,
+        "nvp_resistance_quantile": 0.95
+    },
+    "heatmap_generation_settings": {
+        "ugch_params": {
+            "greek_weights": {
+                "norm_DXOI": 1.5,
+                "norm_GXOI": 2,
+                "norm_VXOI": 1.2,
+                "norm_TXOI": 1,
+                "norm_CharmOI": 1,
+                "norm_VannaOI": 1.2
+            }
+        }
+    },
+    "market_regime_engine_settings": {
+        "default_regime": "REGIME_UNCLEAR_OR_TRANSITIONING",
+        "regime_evaluation_order": [
+            "REGIME_EXTREME_NEG_GIB_PANIC_FLOW",
+            "REGIME_HIGH_VAPI_FA_BULLISH_MOMENTUM_UNIVERSAL"
+        ],
+        "regime_rules": {
+            "//": "Example of a regime rule. This section will be very large.",
+            "REGIME_EXTREME_NEG_GIB_PANIC_FLOW": {
+                "GIB_OI_based_Und_lt": "dynamic_threshold:gib_extreme_neg_thresh",
+                "TW_LAF_Z_Score_Und_lt": -1.5,
+                "vri_2_0_und_aggregate_gt": 1
+            }
+        },
+        "time_of_day_definitions": {
+            "eod_pressure_calc_time": "15:00:00"
+        }
+    },
+    "visualization_settings": {
+        "dashboard_refresh_interval_seconds": 60,
+        "max_table_rows_signals_insights": 10,
+        "dashboard": {
+            "title": "EOTS V2.5 Dashboard",
+            "footer": "\u00a9 2024 Elite Options Trading System",
+            "defaults": {
+                "symbol": "SPY",
+                "dte": "0",
+                "range_pct": 5.0,
+                "mode": "main"
+            },
+            "plotly_defaults": {
+                "layout": {
+                    "template": "plotly_dark"
+                }
+            },
+            "styling_constants": {
+                "status_icon_map": {
+                    "info": "bi bi-info-circle-fill",
+                    "error": "bi bi-exclamation-triangle-fill"
+                }
+            },
+            "chart_specific_heights": {},
+            "default_graph_height": 450,
+            "show_chart_timestamps": true,
+            "status_message_error_duration_ms": 10000,
+            "status_message_default_duration_ms": 5000,
+            "range_slider_marks": {
+                "1": "1%",
+                "5": "5%",
+                "10": "10%"
+            },
+            "charts_per_row": 2,
+            "full_width_chart_ids": [
+                "mspi_heatmap_viz",
+                "strategy_recommendations_table_display"
+            ],
+            "styles": {
+                "main_container": {},
+                "page_title": {},
+                "main_footer": {},
+                "control_panel": {},
+                "control_label": {}
+            },
+            "modes_detail_config": {
+                "main": {
+                    "label": "Main Dashboard",
+                    "module_name": "main_dashboard_display",
+                    "charts": [
+                        "market_regime_indicator_display",
+                        "gib_oi_based_gauge_viz",
+                        "mspi_heatmap_viz",
+                        "nvp_strike_viz",
+                        "combined_rolling_flow_chart_viz",
+                        "vri_0dte_aggregated_viz",
+                        "key_levels_summary_viz",
+                        "strategy_recommendations_table_display"
+                    ]
+                },
+                "flow": {
+                    "label": "Flow Breakdown",
+                    "module_name": "flow_mode_display",
+                    "charts": [
+                        "net_value_heatmap_viz",
+                        "arfi_strike_viz",
+                        "net_cust_delta_flow_viz",
+                        "net_cust_gamma_flow_viz",
+                        "net_cust_vega_flow_viz",
+                        "vflowratio_viz",
+                        "granular_pcrs_viz"
+                    ]
+                },
+                "structure": {
+                    "label": "Structure & Dealer Pos.",
+                    "module_name": "structure_mode_display",
+                    "charts": [
+                        "mspi_components_viz",
+                        "sdag_multiplicative_viz",
+                        "sdag_directional_viz",
+                        "sdag_weighted_viz",
+                        "sdag_volatility_focused_viz",
+                        "sai_strike_viz",
+                        "ssi_strike_viz"
+                    ]
+                },
+                "timedecay": {
+                    "label": "Time Decay & Pinning",
+                    "module_name": "time_decay_mode_display",
+                    "charts": [
+                        "tdpi_strike_viz",
+                        "vci_0dte_strike_viz",
+                        "ctr_strike_viz",
+                        "tdfi_strike_viz"
+                    ]
+                },
+                "volatility": {
+                    "label": "Volatility Deep Dive",
+                    "module_name": "volatility_mode_display",
+                    "charts": [
+                        "vri_sensitivity_strike_viz",
+                        "vri_0dte_strike_viz",
+                        "vvr_0dte_agg_viz",
+                        "vfi_0dte_agg_viz",
+                        "skew_factor_global_viz",
+                        "iv_term_structure_viz",
+                        "historical_iv_rank_viz"
+                    ]
+                },
+                "advanced_flow": {
+                    "label": "Adv. Flow Analysis",
+                    "module_name": "advanced_flow_mode",
+                    "charts": [
+                        "vapi_fa_z_score_chart",
+                        "dwfd_z_score_chart",
+                        "tw_laf_z_score_chart",
+                        "vapi_fa_z_score_gauge_chart",
+                        "dwfd_z_score_gauge_chart",
+                        "tw_laf_z_score_gauge_chart"
+                    ]
+                }
+            },
+            "advanced_flow_chart_settings": {
+                "z_score_levels": [
+                    {
+                        "name": "strong_negative",
+                        "threshold": -2.0,
+                        "color": "#d62728"
+                    },
+                    {
+                        "name": "mild_negative",
+                        "threshold": -0.5,
+                        "color": "#ff9896"
+                    },
+                    {
+                        "name": "neutral",
+                        "threshold": 0.5,
+                        "color": "#aec7e8"
+                    },
+                    {
+                        "name": "mild_positive",
+                        "threshold": 2.0,
+                        "color": "#98df8a"
+                    },
+                    {
+                        "name": "strong_positive",
+                        "threshold": null,
+                        "color": "#2ca02c"
+                    }
+                ],
+                "default_bar_color": "#cccccc",
+                "show_bar_threshold_lines_default": true
+            },
+            "main_dashboard_settings": {
+                "regime_indicator": {
+                    "default_title_font_size": 16,
+                    "regime_colors": {
+                        "REGIME_BULLISH_TREND": "#2ca02c",
+                        "REGIME_BEARISH_TREND": "#d62728",
+                        "REGIME_NEUTRAL_CONSOLIDATION": "#1f77b4",
+                        "REGIME_VOLATILITY_EXPANSION": "#ff7f0e",
+                        "REGIME_UNCLEAR_OR_TRANSITIONING": "#7f7f7f",
+                        "REGIME_UNKNOWN": "#7f7f7f",
+                        "default": "#cccccc"
+                    },
+                    "indicator_value_for_color": 50
+                },
+                "gib_gauge": {
+                    "bullish_color": "rgba(44, 160, 44, 0.7)",
+                    "bearish_color": "rgba(214, 39, 40, 0.7)",
+                    "neutral_color": "rgba(127, 127, 127, 0.7)",
+                    "gauge_axis_range_min": -2.0,
+                    "gauge_axis_range_max": 2.0,
+                    "bullish_threshold": 0.5,
+                    "bearish_threshold": -0.5
+                },
+                "mspi_heatmap": {
+                    "colorscale": "RdYlGn",
+                    "hover_format_strike": ".2f",
+                    "hover_format_dte": ".0f",
+                    "hover_format_mspi": ".3f",
+                    "zmin": -0.5,
+                    "zmax": 0.5
+                },
+                "nvp_arfi_chart": {
+                    "nvp_bar_color": "rgba(31, 119, 180, 0.7)",
+                    "arfi_line_color": "rgba(255, 127, 14, 0.9)",
+                    "hover_format_strike": ".2f",
+                    "hover_format_nvp": ",.0f",
+                    "hover_format_arfi": ".2f"
+                },
+                "combined_flow_chart": {
+                    "netvalueflow_15m_color": "#17becf",
+                    "gib_oi_based_color": "#9467bd",
+                    "hover_format_value": ",.0f",
+                    "hover_format_gib": ".2f"
+                },
+                "vri_0dte_agg_chart": {
+                    "bar_color": "#bcbd22",
+                    "hover_format_value": ".2f"
+                },
+                "key_levels_chart": {
+                    "bar_color": "#e377c2",
+                    "levels_to_display": {
+                        "hp_eod_und": "EOD Hedging Pressure",
+                        "gamma_max_strike_und": "Gamma Max Strike",
+                        "charm_max_strike_und": "Charm Max Strike",
+                        "vanna_max_strike_und": "Vanna Max Strike",
+                        "zero_gamma_strike_und": "Zero Gamma"
+                    },
+                    "hover_format_value": ",.0f"
+                },
+                "recommendations_table": {
+                    "header_fill_color": "rgba(220, 220, 230, 0.9)",
+                    "cells_fill_color": "rgba(245, 245, 245, 0.85)",
+                    "font_color": "black",
+                    "font_size": 11,
+                    "header_font_size": 12
+                }
+            },
+            "flow_mode_settings": {
+                "net_value_heatmap": {
+                    "colorscale": "Viridis",
+                    "zmid_configurable": 0,
+                    "reversal_colorscale": true,
+                    "hover_format_strike": ".2f",
+                    "hover_format_value": ",.0f",
+                    "xaxis_title": "Option Value Categories",
+                    "yaxis_title": "Strike Price"
+                },
+                "arfi_chart": {
+                    "bar_color": "#636EFA",
+                    "hover_format_strike": ".2f",
+                    "hover_format_arfi": ".3f",
+                    "title": "ARFI (Agg. Risk Flow Imbalance) by Strike"
+                },
+                "net_cust_flow_charts": {
+                    "delta_color": "#00CC96",
+                    "gamma_color": "#EF553B",
+                    "vega_color": "#AB63FA",
+                    "theta_color": "#FFA15A",
+                    "chart_height": 250,
+                    "hover_format_flow": ".2e",
+                    "hover_format_timestamp": "%Y-%m-%d %H:%M:%S"
+                },
+                "vflowratio_chart": {
+                    "line_color": "#FECB52",
+                    "balance_line_color": "grey",
+                    "balance_line_dash": "dash",
+                    "balance_line_value": 0.5,
+                    "hover_format_value": ".2f",
+                    "hover_format_timestamp": "%Y-%m-%d %H:%M:%S"
+                },
+                "granular_pcrs_chart": {
+                    "series_settings": [
+                        {
+                            "key": "pcr_cust_buy_val_d",
+                            "label": "PCR Buy Val",
+                            "color": "#FF6692"
+                        },
+                        {
+                            "key": "pcr_cust_sell_val_d",
+                            "label": "PCR Sell Val",
+                            "color": "#B6E880"
+                        },
+                        {
+                            "key": "pcr_cust_buy_vol_d",
+                            "label": "PCR Buy Vol",
+                            "color": "#FF97FF"
+                        },
+                        {
+                            "key": "pcr_cust_sell_vol_d",
+                            "label": "PCR Sell Vol",
+                            "color": "#FECB52"
+                        }
+                    ],
+                    "yaxis_type": "log",
+                    "balance_line_color": "grey",
+                    "balance_line_dash": "dash",
+                    "balance_line_value_pcr": 1.0,
+                    "hover_format_value": ".2f",
+                    "hover_format_timestamp": "%Y-%m-%d %H:%M:%S"
+                }
+            },
+            "structure_mode_settings": {
+                "mspi_components_chart": {
+                    "component_colors": {
+                        "mspi": {
+                            "pos": "#1f77b4",
+                            "neg": "#1f77b4"
+                        },
+                        "dag_custom_norm": {
+                            "pos": "#ff7f0e",
+                            "neg": "#ff7f0e"
+                        },
+                        "tdpi_norm": {
+                            "pos": "#2ca02c",
+                            "neg": "#2ca02c"
+                        },
+                        "vri_sensitivity_norm": {
+                            "pos": "#d62728",
+                            "neg": "#d62728"
+                        },
+                        "arfi_strike_norm": {
+                            "pos": "#9467bd",
+                            "neg": "#9467bd"
+                        },
+                        "default_comp": {
+                            "pos": "#8c564b",
+                            "neg": "#8c564b"
+                        }
+                    },
+                    "y_axis_range": [
+                        -1.2,
+                        1.2
+                    ],
+                    "bar_mode": "overlay",
+                    "hover_format_strike": ".2f",
+                    "hover_format_value": ".3f"
+                },
+                "sdag_charts": {
+                    "call_bar_color": "rgba(44, 160, 44, 0.7)",
+                    "put_bar_color": "rgba(214, 39, 40, 0.7)",
+                    "net_trace_marker_style": {
+                        "symbol": "diamond",
+                        "color": "rgba(230, 230, 230, 0.9)",
+                        "size": 7
+                    },
+                    "show_net_trace_default": true,
+                    "bar_mode": "relative",
+                    "hover_format_strike": ".2f",
+                    "hover_format_sdag": ".2f",
+                    "hover_format_gex": ".2e",
+                    "hover_format_dex": ".2e"
+                },
+                "sai_chart": {
+                    "bar_color": "#00CED1",
+                    "y_axis_range": [
+                        -1.1,
+                        1.1
+                    ],
+                    "hover_format_strike": ".2f",
+                    "hover_format_sai": ".3f"
+                },
+                "ssi_chart": {
+                    "bar_color": "#6A5ACD",
+                    "y_axis_range": [
+                        0,
+                        1.05
+                    ],
+                    "hover_format_strike": ".2f",
+                    "hover_format_ssi": ".3f"
+                }
+            },
+            "time_decay_mode_settings": {
+                "tdpi_chart": {
+                    "call_bar_color": "rgba(0, 100, 80, 0.7)",
+                    "put_bar_color": "rgba(139, 0, 0, 0.7)",
+                    "hover_format_strike": ".2f",
+                    "hover_format_tdpi": ".2f",
+                    "hover_format_charmxoi": ".0f",
+                    "hover_format_txoi": ".0f"
+                },
+                "vci_0dte_chart": {
+                    "line_color": "#FFD700",
+                    "cascade_threshold_color": "#FF6347",
+                    "cascade_threshold_dash": "dot",
+                    "hover_format_timestamp": "%Y-%m-%d %H:%M",
+                    "hover_format_vci": ".3f"
+                },
+                "ctr_chart": {
+                    "line_color": "#FF8C00",
+                    "cascade_threshold_color": "#FFA07A",
+                    "cascade_threshold_dash": "dashdot",
+                    "hover_format_strike": ".2f",
+                    "hover_format_ctr": ".2f"
+                },
+                "tdfi_chart": {
+                    "line_color": "#ADFF2F",
+                    "cascade_threshold_color": "#FF4500",
+                    "cascade_threshold_dash": "longdash",
+                    "hover_format_strike": ".2f",
+                    "hover_format_tdfi": ".2f"
+                }
+            },
+            "volatility_mode_settings": {
+                "vri_sensitivity_chart": {
+                    "positive_color": "mediumseagreen",
+                    "negative_color": "crimson",
+                    "hover_format_strike": ".2f",
+                    "hover_format_vri": ".3g",
+                    "hover_format_vvr_sens": ".2f",
+                    "hover_format_vfi_sens": ".2f"
+                },
+                "vri_0dte_chart": {
+                    "positive_color": "goldenrod",
+                    "negative_color": "darkcyan",
+                    "hover_format_strike": ".2f",
+                    "hover_format_vri": ".3g",
+                    "hover_format_vvr_0dte": ".2f",
+                    "hover_format_vfi_0dte": ".2f"
+                },
+                "vvr_0dte_agg_chart": {
+                    "line_color": "#636EFA",
+                    "cascade_threshold_color": "#EF553B",
+                    "cascade_threshold_dash": "dash",
+                    "hover_format_timestamp": "%Y-%m-%d %H:%M",
+                    "hover_format_value": ".2f"
+                },
+                "vfi_0dte_agg_chart": {
+                    "line_color": "#00CC96",
+                    "high_threshold_color": "#FFA15A",
+                    "high_threshold_dash": "dash",
+                    "hover_format_timestamp": "%Y-%m-%d %H:%M",
+                    "hover_format_value": ".2f"
+                },
+                "skew_factor_global_chart": {
+                    "line_color": "#AB63FA",
+                    "zeroline_color": "grey",
+                    "hover_format_timestamp": "%Y-%m-%d %H:%M",
+                    "hover_format_value": ".3f"
+                },
+                "iv_term_structure_chart": {
+                    "atm_iv_color": "#FECB52",
+                    "otm_call_skew_color": "#B6E880",
+                    "otm_put_skew_color": "#FF6692",
+                    "hover_format_dte": ".0f",
+                    "hover_format_iv": ".2f",
+                    "atm_delta_threshold": 0.1
+                },
+                "historical_iv_rank_chart": {
+                    "gauge_bar_color": "darkblue",
+                    "step_colors": [
+                        "lightgreen",
+                        "lightyellow",
+                        "lightcoral"
+                    ],
+                    "font_color": "white",
+                    "value_suffix": "%"
+                }
+            }
+        }
+    },
+    "symbol_specific_overrides": {
+        "//": "This section allows fine-tuning EOTS for individual tickers.",
+        "DEFAULT": {
+            "strategy_settings": {
+                "targets": {
+                    "target_atr_stop_loss_multiplier": 1.5
+                }
+            }
+        },
+        "SPY": {
+            "market_regime_engine_settings": {
+                "eod_reference_price_field": "prev_day_close_price_und"
+            },
+            "strategy_settings": {
+                "targets": {
+                    "target_atr_stop_loss_multiplier": 1.2
+                }
+            }
+        },
+        "AAPL": {
+            "strategy_settings": {
+                "targets": {
+                    "target_atr_stop_loss_multiplier": 2
+                }
+            }
+        }
+    }
+}
