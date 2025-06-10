@@ -6,9 +6,9 @@ from typing import Any, Dict, Tuple
 import numpy as np
 import pandas as pd
 
-from utils.config_manager_v2_5 import ConfigManagerV2_5
-from data_management.historical_data_manager_v2_5 import HistoricalDataManagerV2_5
-from data_models.eots_schemas_v2_5 import RawOptionsContractV2_5, RawUnderlyingDataV2_5
+from ..utils.config_manager_v2_5 import ConfigManagerV2_5
+from ..data_management.historical_data_manager_v2_5 import HistoricalDataManagerV2_5
+from ..data_models.eots_schemas_v2_5 import RawOptionsContractV2_5, RawUnderlyingDataV2_5
 
 logger = logging.getLogger(__name__)
 EPSILON = 1e-9

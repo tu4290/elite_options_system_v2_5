@@ -1,1 +1,1 @@
-# This file makes the dashboard_v2 directory a Python package.
+# This file makes the elite_options_system_v2_5 directory a Python package.

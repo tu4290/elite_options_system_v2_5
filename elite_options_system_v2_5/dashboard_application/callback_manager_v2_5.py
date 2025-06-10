@@ -12,9 +12,9 @@ import dash_bootstrap_components as dbc
 import plotly.graph_objects as go
 
 # EOTS V2.5 Imports
-from core_analytics_engine.its_orchestrator_v2_5 import ITSOrchestratorV2_5
-from utils.config_manager_v2_5 import ConfigManagerV2_5
-from data_models.eots_schemas_v2_5 import FinalAnalysisBundleV2_5
+from ..core_analytics_engine.its_orchestrator_v2_5 import ITSOrchestratorV2_5
+from ..utils.config_manager_v2_5 import ConfigManagerV2_5
+from ..data_models.eots_schemas_v2_5 import FinalAnalysisBundleV2_5
 from . import ids
 from .utils_dashboard_v2_5 import create_empty_figure
 

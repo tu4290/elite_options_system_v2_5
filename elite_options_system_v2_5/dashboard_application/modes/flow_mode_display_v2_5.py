@@ -12,8 +12,8 @@ from .. import ids
 from ..utils_dashboard_v2_5 import (
     create_empty_figure, add_timestamp_annotation, add_price_line, PLOTLY_TEMPLATE
 )
-from data_models.eots_schemas_v2_5 import FinalAnalysisBundleV2_5
-from utils.config_manager_v2_5 import ConfigManagerV2_5
+from ...data_models.eots_schemas_v2_5 import FinalAnalysisBundleV2_5
+from ...utils.config_manager_v2_5 import ConfigManagerV2_5
 
 logger = logging.getLogger(__name__)
 
