@@ -8,8 +8,8 @@ from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 
-from data_models.eots_schemas_v2_5 import ProcessedUnderlyingAggregatesV2_5
-from utils.config_manager_v2_5 import ConfigManagerV2_5
+from ..data_models.eots_schemas_v2_5 import ProcessedUnderlyingAggregatesV2_5
+from ..utils.config_manager_v2_5 import ConfigManagerV2_5
 
 logger = logging.getLogger(__name__)
 

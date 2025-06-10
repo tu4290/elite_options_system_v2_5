@@ -9,22 +9,22 @@ from dash import Dash
 import dash_bootstrap_components as dbc
 
 # EOTS V2.5 Core Imports
-from utils.config_manager_v2_5 import ConfigManagerV2_5
-from data_management.database_manager_v2_5 import DatabaseManagerV2_5
-from data_management.historical_data_manager_v2_5 import HistoricalDataManagerV2_5
-from data_management.performance_tracker_v2_5 import PerformanceTrackerV2_5
-from data_management.initial_processor_v2_5 import InitialDataProcessorV2_5
-from core_analytics_engine.metrics_calculator_v2_5 import MetricsCalculatorV2_5
-from core_analytics_engine.market_regime_engine_v2_5 import MarketRegimeEngineV2_5
-from core_analytics_engine.signal_generator_v2_5 import SignalGeneratorV2_5
-from core_analytics_engine.adaptive_trade_idea_framework_v2_5 import AdaptiveTradeIdeaFrameworkV2_5
-from core_analytics_engine.trade_parameter_optimizer_v2_5 import TradeParameterOptimizerV2_5
-from core_analytics_engine.its_orchestrator_v2_5 import ITSOrchestratorV2_5
+from ..utils.config_manager_v2_5 import ConfigManagerV2_5
+from ..data_management.database_manager_v2_5 import DatabaseManagerV2_5
+from ..data_management.historical_data_manager_v2_5 import HistoricalDataManagerV2_5
+from ..data_management.performance_tracker_v2_5 import PerformanceTrackerV2_5
+from ..data_management.initial_processor_v2_5 import InitialDataProcessorV2_5
+from ..core_analytics_engine.metrics_calculator_v2_5 import MetricsCalculatorV2_5
+from ..core_analytics_engine.market_regime_engine_v2_5 import MarketRegimeEngineV2_5
+from ..core_analytics_engine.signal_generator_v2_5 import SignalGeneratorV2_5
+from ..core_analytics_engine.adaptive_trade_idea_framework_v2_5 import AdaptiveTradeIdeaFrameworkV2_5
+from ..core_analytics_engine.trade_parameter_optimizer_v2_5 import TradeParameterOptimizerV2_5
+from ..core_analytics_engine.its_orchestrator_v2_5 import ITSOrchestratorV2_5
 
 # EOTS V2.5 Dashboard Imports
-from dashboard_application import layout_manager
-from dashboard_application import callback_manager_v2_5
-from dashboard_application import utils_dashboard_v2_5 # ADDED IMPORT
+from . import layout_manager_v2_5
+from . import callback_manager_v2_5
+from . import utils_dashboard_v2_5
 
 def main():
     """
@@ -92,7 +92,7 @@ def main():
     app.title = "EOTS v2.5 Apex Predator"
 
     # CORRECTED: Pass the config_manager instance to the layout function
-    app.layout = layout_manager.create_master_layout(config_manager)
+    app.layout = layout_manager_v2_5.create_master_layout(config_manager) # Adjusted for rename
     
     callback_manager_v2_5.register_v2_5_callbacks(app, orchestrator, config_manager)
     logger.info("Dashboard layout created and callbacks registered.")

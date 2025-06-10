@@ -9,9 +9,10 @@ import pandas as pd
 from pydantic import ValidationError as PydanticValidationError
 
 # EOTS V2.5 Data Contracts
-from data_models.eots_schemas_v2_5 import (
-    EOTSConfigV2_5, UnprocessedDataBundleV2_5, ProcessedDataBundleV2_5,
-    FinalAnalysisBundleV2_5, ActiveRecommendationPayloadV2_5
+from ..data_models.eots_schemas_v2_5 import (
+    UnprocessedDataBundleV2_5, ProcessedDataBundleV2_5, FinalAnalysisBundleV2_5, EOTSConfigV2_5,
+    RawUnderlyingDataCombinedV2_5, KeyLevelsDataV2_5, SignalPayloadV2_5,
+    ATIFStrategyDirectivePayloadV2_5, ActiveRecommendationPayloadV2_5, TradeParametersV2_5
 )
 
 # EOTS V2.5 Core Components

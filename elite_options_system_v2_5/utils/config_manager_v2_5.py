@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional, Tuple, Callable
 from jsonschema import validate, ValidationError
 from pydantic import ValidationError as PydanticValidationError
 
-from data_models.eots_schemas_v2_5 import EOTSConfigV2_5, SymbolSpecificOverrides
+from ..data_models.eots_schemas_v2_5 import EOTSConfigV2_5, SymbolSpecificOverrides
 
 logger = logging.getLogger(__name__)
 
